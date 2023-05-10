@@ -1,0 +1,30 @@
+package com.mapapplication.mapapplication.entity;
+
+import lombok.Getter;
+import lombok.Setter;
+
+import javax.persistence.*;
+
+@Entity
+@Table(name = "places")
+@Getter @Setter
+public class Place {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    private String placeId;
+    @Column(name = "lat")
+    private Double latitude;
+    @Column(name = "lng")
+    private Double longitude;
+
+    private String name;
+
+    private Double rating;
+    @Column(name = "formatted_phone_number")
+    private String phoneNumber;
+
+    // 생성자, getter, setter, 기타 메서드
+}
+
