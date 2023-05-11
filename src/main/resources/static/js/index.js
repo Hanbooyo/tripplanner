@@ -66,19 +66,31 @@ function addMarker(position) {
             };
             const placesService = new google.maps.places.PlacesService(map);
             placesService.getDetails(request, (place, status) => {
+                place.rating
                 const lat = place.geometry.location.lat()
                 const lng = place.geometry.location.lng()
-                console.log(lat, lng, place.name, place.rating)
+                console.log("lat : " + lat)
+                console.log("lng : " + lng)
+                console.log("name : " + place.name)
+                console.log("rating : " + place.rating)
+                console.log("place : " + place)
+
+                const placeRating = place.rating === undefined ? 0 : place.rating
+                const placeName = place.name === undefined ? "알수없음" : place.name
+                console.log("placeRating : " + placeRating)
+                console.log("placeName : " + placeName)
+
                 const content = "<form action='http://localhost:8080/places/save' method='post'>" +
-                    "<input name='placeId' value='" + placeId + "' /></input></br>" +
-                    "<input name='name' value='" + place.name + "' /></input></br>" +
-                    "<input name='rating' value='" + place.rating + "'></input></br>" +
-                    "<input name='phoneNumber' value='" + place.formatted_phone_number + "'></input></br>" +
-                    "<input name='latitude' value='" + lat + "'></input></br>" +
-                    "<input name='longitude' value='" + lng + "'></input></br>" +
+                    "<label for='placeId'>아이디</label><input name='placeId' id='placeId' value='" + placeId + "' /></br>" +
+                    "<label for='phone'>전화번호</label><input name='phoneNumber' id='phone' value='" + place.formatted_phone_number + "'/></br>" +
+                    "<label for='lat'>위도</label><input name='latitude' id='lat' value='" + lat + "'/></br>" +
+                    "<label for='longi'>경도</label><input name='longitude' id='longi' value='" + lng + "'/></br>" +
+                    "<label for='rating'>별점</label><input name='rating' id='rating' value='" + placeRating + "'/></br>" +
+                    "<label for='name'>이름</label><input name='name' id='name' value='" + placeName + "' /></br>" +
                     "<input type='submit' value='저장'/>" +
                     "<input type='button' value='삭제' onClick='deleteMarkerById()' />" +
                     "</form>"
+
 
                 if (status === google.maps.places.PlacesServiceStatus.OK) {
                     // 마커 클릭 시 장소 정보 보여주기
@@ -88,10 +100,7 @@ function addMarker(position) {
                             //인포윈도우 내용
                             content: content,
                         });
-                        console.log(place.name);
-                        console.log(place.rating);
-                        console.log(place.formatted_phone_number);
-                        console.log(place.geometry);
+
                         infowindow.open({
                             anchor: marker,
                             map,
@@ -119,4 +128,3 @@ function addMarker(position) {
 
 
 window.initMap = initMap;
-

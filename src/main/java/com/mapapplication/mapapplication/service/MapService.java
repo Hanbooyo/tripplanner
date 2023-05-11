@@ -9,7 +9,6 @@ import java.util.List;
 @Service
 public class MapService {
 
-
     private MapRepository mapRepository;
 
     public MapService(MapRepository mapRepository) {

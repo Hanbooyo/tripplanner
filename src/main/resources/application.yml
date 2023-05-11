@@ -1,19 +1,23 @@
 spring:
   datasource:
-    url: jdbc:mysql://database-1.c0fj3vqf6lbq.ap-northeast-2.rds.amazonaws.com:3306/mapapp?serverTimezone=Asia/Seoul&characterEncoding=UTF-8
-    username : admin
-    password : 1234567a
+    url:
+    username :
+    password :
     driver-class-name: com.mysql.cj.jdbc.Driver
 
   jpa:
     hibernate:
       ddl-auto: none
+      naming:
+        implicit-strategy: org.hibernate.boot.model.naming.ImplicitNamingStrategyLegacyJpaImpl # hibernate에서 camel case를 자동으로 snake case로 변환하는 문제 해결
+        physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl # hibernate에서 camel case를 자동으로 snake case로 변환하는 문제 해결
     show-sql: true
     properties:
       hibernate:
         format_sql: true
         default_batch_fetch_size: 500
     open-in-view: false
+
 
   servlet:
     multipart:
