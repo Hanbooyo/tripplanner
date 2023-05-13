@@ -44,8 +44,6 @@ public class PlaceController {
 
             return ResponseEntity.status(HttpStatus.CREATED).body("장소 저장 성공");
         } catch (Exception e) {
-            System.out.println(e);
-            System.out.println(placeId);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("장소 저장 실패");
         }
     }

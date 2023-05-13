@@ -13,6 +13,7 @@ public class Place {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(name = "place_id")
     private String placeId;
     @Column(name = "lat")
     private Double latitude;
