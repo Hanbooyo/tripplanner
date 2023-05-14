@@ -26,4 +26,5 @@ public class TripSchedule {
     @Column(name = "userId")
     private Integer userId;
 
+
 }

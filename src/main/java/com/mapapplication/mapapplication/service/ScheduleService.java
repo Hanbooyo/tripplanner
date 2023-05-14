@@ -44,5 +44,29 @@ public class ScheduleService {
 
     }
 
+    // sortOrder 업데이트
+    public void updateSortOrder(Long parentId, Long scheduleId, int newSortOrder) {
+        TripDailySchedule targetSchedule = tripDailyScheduleRepository.findById(scheduleId)
+                .orElseThrow(() -> new EntityNotFoundException("일정을 찾을 수 없음: " + scheduleId));
+
+        // 동일한 부모를 가진 일정들을 sortOrder 오름차순으로 조회
+        List<TripDailySchedule> schedules = tripDailyScheduleRepository.findByParentIdOrderBySortOrderAsc(parentId);
+
+        // 대상 일정의 sortOrder 업데이트
+        targetSchedule.setSortOrder(newSortOrder);
+        tripDailyScheduleRepository.save(targetSchedule);
+
+        // 다른 일정들의 sortOrder 재조정
+        for (int i = 0; i < schedules.size(); i++) {
+            TripDailySchedule schedule = schedules.get(i);
+            if (!schedule.getId().equals(scheduleId)) {
+                // 다른 일정들의 sortOrder를 리스트 내 위치에 따라 업데이트
+                int newOrder = i + 1;
+                schedule.setSortOrder(newOrder);
+                tripDailyScheduleRepository.save(schedule);
+            }
+        }
+    }
+
 
 }

@@ -8,6 +8,5 @@ import java.util.List;
 
 @Repository
 public interface PlaceRepository extends JpaRepository<Place, Long> {
-    // 필요한 추가 메서드 정의
-    List<Place> findAll();
+    List<Place> findByParentId(Long parentId);
 }

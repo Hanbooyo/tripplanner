@@ -4,6 +4,7 @@ import com.mapapplication.mapapplication.dto.ScheduleDto;
 import com.mapapplication.mapapplication.entity.TripDailySchedule;
 import com.mapapplication.mapapplication.entity.TripSchedule;
 import com.mapapplication.mapapplication.repository.ScheduleRepository;
+import com.mapapplication.mapapplication.repository.TripDailyScheduleRepository;
 import com.mapapplication.mapapplication.service.ScheduleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.servlet.view.RedirectView;
 
+import javax.persistence.EntityNotFoundException;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -22,10 +24,13 @@ public class ScheduleController {
 
     private final ScheduleService scheduleService;
     private final ScheduleRepository scheduleRepository;
+    private final TripDailyScheduleRepository tripDailyScheduleRepository;
 
-    public ScheduleController(ScheduleService scheduleService, ScheduleRepository scheduleRepository) {
+    public ScheduleController(ScheduleService scheduleService, ScheduleRepository scheduleRepository,
+                              TripDailyScheduleRepository tripDailyScheduleRepository) {
         this.scheduleService = scheduleService;
         this.scheduleRepository = scheduleRepository;
+        this.tripDailyScheduleRepository = tripDailyScheduleRepository;
     }
 
     @PostMapping("/save")
@@ -57,5 +62,28 @@ public class ScheduleController {
         redirectAttributes.addFlashAttribute("message", "삭제 성공");
         return new RedirectView("/schedules");
     }
+
+    @PutMapping("/{parentId}/updateDates")
+    public ResponseEntity<String> updateTripDates(
+            @PathVariable("parentId") Long parentId,
+            @RequestParam("startDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
+            @RequestParam("endDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate) {
+        //일정 업데이트
+
+        return ResponseEntity.ok("여행 일정 업데이트 완료");
+    }
+
+
+    // 일정의 sortOrder 업데이트
+    @PutMapping("/{parentId}/daily/{scheduleId}/sortOrder/{newSortOrder}")
+    public ResponseEntity<String> updateSortOrder(
+            @PathVariable("parentId") Long parentId,
+            @PathVariable("scheduleId") Long scheduleId,
+            @PathVariable("newSortOrder") int newSortOrder) {
+
+        scheduleService.updateSortOrder(parentId, scheduleId, newSortOrder);
+        return ResponseEntity.ok("일정순서 업데이트 완료");
+    }
+
 
 }

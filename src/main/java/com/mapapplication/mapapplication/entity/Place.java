@@ -15,17 +15,23 @@ public class Place {
 
     @Column(name = "place_id")
     private String placeId;
+
     @Column(name = "lat")
     private Double latitude;
+
     @Column(name = "lng")
     private Double longitude;
 
     private String name;
 
     private Double rating;
+
     @Column(name = "formatted_phone_number")
     private String phoneNumber;
 
-    // 생성자, getter, setter, 기타 메서드
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "parentId")
+    private TripDailySchedule parent;
+
 }
 
