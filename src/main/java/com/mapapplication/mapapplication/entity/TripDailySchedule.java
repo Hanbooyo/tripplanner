@@ -15,8 +15,9 @@ public class TripDailySchedule {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "parentId")
-    private Long parentId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "parentId")
+    private TripSchedule parent;
 
     @Column(name = "title")
     private String title;
@@ -24,8 +25,13 @@ public class TripDailySchedule {
     @Column(name = "tripDate")
     private LocalDate date;
 
-    @Column(name = "sortOrder")
-    private Integer sortOrder;
+    public TripSchedule getParent() {
+        return parent;
+    }
+
+    public void setParent(TripSchedule parent) {
+        this.parent = parent;
+    }
 
 }
 

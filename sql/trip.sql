@@ -12,8 +12,7 @@ CREATE TABLE tripDailySchedule (
                                    id INT PRIMARY KEY AUTO_INCREMENT,
                                    parentId INT NOT NULL,
                                    title VARCHAR(255) NOT NULL,
-                                   date DATE NOT NULL,
-                                   sortOrder INT NOT NULL,
+                                   tripDate DATE NOT NULL,
                                    FOREIGN KEY (parentId) REFERENCES tripSchedule(id)
 );
 

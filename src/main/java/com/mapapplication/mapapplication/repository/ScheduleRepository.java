@@ -12,11 +12,8 @@ import java.util.List;
 
 @Repository
 public interface ScheduleRepository extends JpaRepository<TripSchedule, Long> {
-    @Query("SELECT tds FROM TripDailySchedule tds WHERE tds.parentId = :parentId")
+    List<TripSchedule> findAll();
+    @Query("SELECT tds FROM TripDailySchedule tds WHERE tds.parent.id = :parentId")
     List<TripDailySchedule> findByParentId(@Param("parentId") Long parentId);
-
-    // sortOrder 업데이트
-    @Modifying
-    @Query("UPDATE TripDailySchedule SET sortOrder = :newSortOrder WHERE id = :scheduleId")
-    void updateSortOrder(@Param("scheduleId") Long scheduleId, @Param("newSortOrder") int newSortOrder);
 }
+

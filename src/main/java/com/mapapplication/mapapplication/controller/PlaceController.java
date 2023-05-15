@@ -7,6 +7,7 @@ import com.mapapplication.mapapplication.repository.PlaceRepository;
 import com.mapapplication.mapapplication.repository.TripDailyScheduleRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -67,6 +68,7 @@ public class PlaceController {
         return modelAndView;
     }
 
+    //장소 하나 지우기
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<String> deletePlace(@PathVariable("id") Long id) {
         try {
@@ -83,12 +85,23 @@ public class PlaceController {
         }
     }
 
+    // 부모id를 받아서 연관된 전체 장소 지워서 초기화
+    @DeleteMapping("/refresh/{parentId}")
+    public ResponseEntity<String> deletePlacesByParentId(@PathVariable("parentId") Long parentId) {
+        try {
+            placeRepository.deleteByParentId(parentId);
+            return ResponseEntity.ok("places 삭제 완료");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("places 삭제 실패");
+        }
+    }
+
 
 
     @GetMapping("/")
     public ModelAndView home() {
         ModelAndView modelAndView = new ModelAndView();
-        modelAndView.setViewName("index");
+        modelAndView.setViewName("calendar");
 
         return modelAndView;
     }

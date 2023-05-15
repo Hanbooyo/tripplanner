@@ -11,6 +11,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.servlet.view.RedirectView;
 
@@ -34,10 +35,10 @@ public class ScheduleController {
     }
 
     @PostMapping("/save")
-    public String createTripSchedule(@RequestParam("title") String title,
-                                     @RequestParam("startDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
-                                     @RequestParam("endDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate,
-                                     RedirectAttributes redirectAttributes) {
+    public RedirectView createTripSchedule(@RequestParam("title") String title,
+                                           @RequestParam("startDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
+                                           @RequestParam("endDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate,
+                                           RedirectAttributes redirectAttributes) {
         // 요청 받은 데이터를 이용하여 TripSchedule 생성 로직 수행
         TripSchedule createdSchedule = scheduleService.createTripSchedule(title, startDate, endDate);
 
@@ -45,8 +46,42 @@ public class ScheduleController {
         Long parentId = createdSchedule.getId();
         redirectAttributes.addAttribute("parentId", parentId);
 
-        // 리다이렉트할 URL을 반환
-        return "redirect:/schedules/{parentId}/daily";
+        // 리다이렉트할 URL을 RedirectView로 생성하여 반환
+        RedirectView redirectView = new RedirectView();
+        redirectView.setUrl("http://localhost:8080/schedules/");
+        return redirectView;
+    }
+
+
+
+    @GetMapping("/")
+    public ModelAndView getCalendarPage() {
+        List<TripSchedule> tripSchedules = scheduleRepository.findAll();
+        ModelAndView modelAndView = new ModelAndView("calendar"); // HTML 템플릿 파일의 이름 (calendar.html)
+        modelAndView.addObject("tripSchedules", tripSchedules);
+        return modelAndView;
+    }
+
+/*
+    @GetMapping("/")
+    public ResponseEntity<List<TripSchedule>> getAllTripSchedules() {
+        List<TripSchedule> tripSchedules = scheduleRepository.findAll();
+        return ResponseEntity.ok(tripSchedules);
+    }
+*/
+
+    @PutMapping("/{tripId}")
+    public String updateTrip(
+            @PathVariable("tripId") Long tripId,
+            @RequestParam("title") String title,
+            @RequestParam("startDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
+            @RequestParam("endDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate,
+            RedirectAttributes redirectAttributes) {
+
+        scheduleService.updateTripSchedule(tripId, title, startDate, endDate);
+        redirectAttributes.addFlashAttribute("message", "Trip updated successfully");
+
+        return "redirect:/";
     }
 
 
@@ -63,27 +98,47 @@ public class ScheduleController {
         return new RedirectView("/schedules");
     }
 
-    @PutMapping("/{parentId}/updateDates")
-    public ResponseEntity<String> updateTripDates(
-            @PathVariable("parentId") Long parentId,
-            @RequestParam("startDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
-            @RequestParam("endDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate) {
-        //일정 업데이트
-
-        return ResponseEntity.ok("여행 일정 업데이트 완료");
-    }
 
 
-    // 일정의 sortOrder 업데이트
-    @PutMapping("/{parentId}/daily/{scheduleId}/sortOrder/{newSortOrder}")
-    public ResponseEntity<String> updateSortOrder(
-            @PathVariable("parentId") Long parentId,
+    @PutMapping("/update/{scheduleId}")
+    public ResponseEntity<String> updateTripDailySchedule(
             @PathVariable("scheduleId") Long scheduleId,
-            @PathVariable("newSortOrder") int newSortOrder) {
+            @RequestParam("title") String title,
+            @RequestParam("newTripDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate newTripDate) {
 
-        scheduleService.updateSortOrder(parentId, scheduleId, newSortOrder);
-        return ResponseEntity.ok("일정순서 업데이트 완료");
+        // 업데이트 대상인 TripDailySchedule 가져오기
+        TripDailySchedule schedule = tripDailyScheduleRepository.findById(scheduleId)
+                .orElseThrow(() -> new EntityNotFoundException("TripDailySchedule을 찾을 수 없음: " + scheduleId));
+
+        //
+
+        if (!schedule.getTitle().equals(title) || !schedule.getDate().equals(newTripDate)) {
+            // 같은 parentId를 가진 다른 TripDailySchedule들 가져오기
+            List<TripDailySchedule> otherSchedules = tripDailyScheduleRepository.findByParentId(schedule.getParent().getId());
+
+            // title 업데이트
+            schedule.setTitle(title);
+
+            // tripDate 맞바꾸기
+            for (TripDailySchedule otherSchedule : otherSchedules) {
+                if (otherSchedule.getId().equals(scheduleId)) {
+                    otherSchedule.setDate(newTripDate);
+                } else if (otherSchedule.getDate().equals(newTripDate)) {
+                    otherSchedule.setDate(schedule.getDate());
+                }
+            }
+
+            // 변경된 TripDailySchedule들 저장
+            tripDailyScheduleRepository.saveAll(otherSchedules);
+            tripDailyScheduleRepository.save(schedule); // 변경된 schedule 엔티티 저장
+
+            return ResponseEntity.ok("TripDailySchedule 업데이트 완료");
+        }
+
+        return ResponseEntity.ok("변경 사항 없음");
     }
+
+
 
 
 }

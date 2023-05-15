@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="http://localhost:8080/js/calendar.js"></script>
+    <link rel="stylesheet" href="http://localhost:8080/css/calendar.css">
+    <!-- fullcalendar 라이브러리 -->
+    <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.7/index.global.min.js'></script>
+    <!-- jQuery 라이브러리 -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+    <!-- bootstrap 4 -->
+    <!-- 부트스트랩 4 스타일시트 -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <!-- 부트스트랩 4 자바스크립트 파일 -->
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+
+    <!-- fullcalendar -->
+    <!-- fullcalendar 라이브러리 스타일시트 -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fullcalendar@5.7.0/main.min.css">
+    <!-- fullcalendar 라이브러리 자바스크립트 파일 -->
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/fullcalendar@5.7.0/main.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
+
+    <title>일정</title>
+</head>
+
+<body>
+    <div id="calendarBox">
+        <div id="calendar"></div>   
+    </div>
+
+    <!-- modal 창(일정추가) -->
+    <div class="modal fade" id="calendarModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">일정을 입력하세요.</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <form action="http://localhost:8080/schedules/save" method="post">
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label for="calendar_content" class="col-form-label">일정 내용</label>
+                            <input type="text" class="form-control" id="calendar_content" name="title">
+                            <label for="calendar_start_date" class="col-form-label">시작 날짜</label>
+                            <input type="date" class="form-control" id="calendar_start_date" name="startDate">
+                            <label for="calendar_end_date" class="col-form-label">종료 날짜</label>
+                            <input type="date" class="form-control" id="calendar_end_date" name="endDate">
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-warning" id="addCalendar">추가</button>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal" id="sprintSettingModalClose">취소</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- modal 창(일정 선택시 일자별로 출력) -->
+    <div class="modal fade" id="allPlan" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <div class="form-group">
+                        <div id="plan_list">
+                            <div class="plans">
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-warning" id="modifyCalendar">일정 수정</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+<!-- modal 창(수정버튼 클릭시) -->
+    <div class="modal fade" id="modiModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">일정을 입력하세요.</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form action="/https://localhost:8080/schedule/{id}" method="post">
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="modify_content" class="col-form-label">일정 내용</label>
+                    <input type="text" class="form-control" id="modify_content" name="title">
+                    <label for="modify_start_date" class="col-form-label">시작 날짜</label>
+                    <input type="date" class="form-control" id="modify_start_date" name="startDate">
+                    <label for="modify_end_date" class="col-form-label">종료 날짜</label>
+                    <input type="date" class="form-control" id="modify_end_date" name="endDate">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="submit" class="btn btn-warning" id="modifyComplete">수정완료</button>
+                <button type="reset" class="btn btn-danger">일정 초기화</button>
+            </div>
+            </form>
+        </div>
+    </div>
+</div>
+   
+
+</body>
+
+</html>
