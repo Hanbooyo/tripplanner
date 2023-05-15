@@ -1,9 +1,9 @@
 spring:
   datasource:
-    url: 
-    username : 
-    password : 
-    driver-class-name: 
+    url:
+    username :
+    password :
+    driver-class-name:
 
   jpa:
     hibernate:
@@ -21,8 +21,8 @@ spring:
 
   servlet:
     multipart:
-      max-file-size: 100MB # ?? ??? ?? ? ??? ?? ??? 100 mb? ??
-      max-request-size: 500MB # ?? ??? ?? ? ?? ?? ??? ?? 500 mb? ??
+      max-file-size: 100MB #
+      max-request-size: 500MB #
 
 logging:
   level:
